@@ -99,3 +99,6 @@ class InventarioView(View):
         self.service.actualizar_cantidad(libro_id, cantidad)
 
         return redirect(request.path)
+    
+
+    #HOLA
