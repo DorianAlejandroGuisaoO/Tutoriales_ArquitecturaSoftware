@@ -12,7 +12,7 @@ services:
 
   web:
     build: .
-    command: gunicorn tienda_project.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn Tienda.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - .:/app
     depends_on:
@@ -24,7 +24,7 @@ services:
       - DB_HOST=db
       - DB_PORT=5432
 
-  nginx:   
+  nginx:
     image: nginx:1.25-alpine
     ports:
       - "80:80"
