@@ -1,16 +1,10 @@
 from django.shortcuts import get_object_or_404
-
 from .domain.builders import OrdenBuilder
 from .domain.logic import CalculadorImpuestos
 from .models import Inventario, Libro
 
-
+# Tutorial 2: servicio de compra que utiliza el Builder para crear la orden y el procesador de pagos con factory 
 class CompraService:
-    """
-    SERVICE LAYER: Orquesta la interacción entre el dominio,
-    la infraestructura y la base de datos.
-    """
-
     def __init__(self, procesador_pago):
         self.procesador_pago = procesador_pago
         self.builder = OrdenBuilder()
@@ -45,3 +39,40 @@ class CompraService:
         inv.save()
 
         return orden.total
+
+
+# Tutorial 1: Compra Rapida sin Builder
+class CompraRapidaService:
+    def __init__(self, procesador_pago):
+        self.procesador_pago = procesador_pago
+
+    def procesar(self, libro_id):
+        libro = Libro.objects.get(id=libro_id)
+        inv = Inventario.objects.get(libro=libro)
+
+        if inv.cantidad <= 0:
+            raise ValueError("No hay existencias.")
+
+        total = CalculadorImpuestos.obtener_total_con_iva(libro.precio)
+
+        if self.procesador_pago.pagar(total):
+            inv.cantidad -= 1
+            inv.save()
+            return total
+
+        return None
+    
+class InventarioService:
+    def obtener_inventario(self):
+        return Inventario.objects.select_related('libro').all()
+
+    def actualizar_cantidad(self, libro_id, cantidad):
+        inv = Inventario.objects.get(libro__id=libro_id)
+        inv.cantidad = cantidad
+        inv.save()
+        return inv
+    
+
+
+
+
