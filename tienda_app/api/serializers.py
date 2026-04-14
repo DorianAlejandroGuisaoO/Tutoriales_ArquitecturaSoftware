@@ -19,3 +19,10 @@ class OrdenInputSerializer(serializers.Serializer):
     libro_id = serializers.IntegerField()
     direccion_envio = serializers.CharField(max_length=200)
     cantidad = serializers.IntegerField(min_value=1, default=1)
+
+    from tienda_app.models import Libro  # ajusta según tu modelo
+
+class ProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Libro
+        fields = ['id', 'titulo', 'autor', 'precio', 'stock']s
