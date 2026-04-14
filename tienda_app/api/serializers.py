@@ -25,4 +25,4 @@ class OrdenInputSerializer(serializers.Serializer):
 class ProductoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Libro
-        fields = ['id', 'titulo', 'autor', 'precio', 'stock']s
+        fields = ['id', 'titulo', 'autor', 'precio', 'stock']
