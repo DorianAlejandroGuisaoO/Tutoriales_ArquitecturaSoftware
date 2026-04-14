@@ -9,13 +9,33 @@ from .serializers import OrdenInputSerializer
 from .serializers import ProductoSerializer
 
 
+from .serializers import OrdenInputSerializer, ProductoSerializer
+from tienda_app.models import Libro
+
+
+class ProductoListAPIView(APIView):
+    """
+    GET /api/v1/productos/
+    Lista todos los productos. Responde Django (patrón Strangler Fig - coexistencia).
+    """
+    def get(self, request):
+        productos = Libro.objects.select_related('inventario').all()
+        serializer = ProductoSerializer(productos, many=True)
+        return Response(
+            {
+                'estado': 'exito',
+                'fuente': 'Django Monolito v1',
+                'productos': serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
 class CompraAPIView(APIView):
     """
-    Endpoint para procesar compras via JSON.
     POST /api/v1/comprar/
     Payload: {"libro_id": 1, "direccion_envio": "Calle 123", "cantidad": 1}
     """
-
     def post(self, request):
         serializer = OrdenInputSerializer(data=request.data)
         if not serializer.is_valid():
@@ -46,24 +66,3 @@ class CompraAPIView(APIView):
             return Response({'error': str(e)}, status=status.HTTP_409_CONFLICT)
         except Exception:
             return Response({'error': 'Error interno'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-
-from tienda_app.models import Libro
-from .serializers import ProductoSerializer
-
-class ProductoListAPIView(APIView):
-    """
-    GET /api/v1/productos/
-    Lista todos los productos. Responde Django (patrón Strangler Fig - coexistencia).
-    """
-    def get(self, request):
-        productos = Libro.objects.all()
-        serializer = ProductoSerializer(productos, many=True)
-        return Response(
-            {
-                'estado': 'exito',
-                'fuente': 'Django Monolito v1',
-                'productos': serializer.data,
-            },
-            status=status.HTTP_200_OK,
-        )
