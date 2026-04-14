@@ -8,7 +8,7 @@ def realizar_compra():
     data = request.get_json()
 
     # Simulación de lógica de negocio extraída
-    producto_id = data.get('producto_id')
+    producto_id = data.get('libro_id')
     cantidad = data.get('cantidad', 1)
 
     if not producto_id:
